@@ -1,0 +1,237 @@
+<html>
+<head>
+</head>
+<body>
+
+<div style="width:95%;margin-bottom:10px;margin-top:-5px;">
+	<h1>Utility to download any UI grid/ table into xls, pdf and csv format.<br />
+	<span style="font-size:medium;">Cross Browser Compatibility (Google Chrome: 58.0, IE: 11.0, Firefox: 53.0)</span>
+	</h1>
+</div>
+
+<div>
+  	<input type="submit" id="showmenu" (click)="showmenu = !showmenu" value="Show / Hide Export Configurations" />
+</div>
+
+<div class="bg" *ngIf="showmenu">
+    <div class="main">
+        <div class="login" style="width:90%;margin-bottom:10px">
+            <table style="margin:0px auto">
+                <tr style="width:90%;margin-bottom:50px">
+                    <td colspan="2" class="tdcss" style="color:#2942b9;font-size:16px;margin-bottom:10px;border-bottom:1px solid;border-bottom-color:rgba(0, 0, 0, 0.3)">
+                       General Configurations
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdcss">
+                        <label>File Name</label>
+                    </td>
+                    <td class="tdcss">
+                        <input type="text" [(ngModel)]="fileNametxt" id="fileNametxt" required="required" value="Demo Grid" />
+                    </td>
+                    <td class="tdcss">                            
+                        <label>Grids To Download</label>
+                    </td>
+                    <td class="tdcss">
+                        <label>Grid 1 <input type="checkbox" value="grid1" checked="checked" name="grid" [(ngModel)]="grid1" /></label>
+                        <label>Grid 2 <input type="checkbox" value="grid2" checked="checked" name="grid" [(ngModel)]="grid2" /></label>
+                        <label>Grid 3 <input type="checkbox" value="grid3" checked="checked" name="grid" [(ngModel)]="grid3" /></label>
+                    </td>
+                 <td class="tdcss">                            
+                        <label>Datasource</label>
+                    </td>
+                    <td class="tdcss" id="ds_value">
+                        <input type="radio" id="serVal" name="dsDetails" value="server" [(ngModel)]="dsDetails" (click)="toggleView()"> Server<br>
+						<input type="radio" id="clientVal" name="dsDetails" value="client" checked [(ngModel)]="dsDetails" (click)="toggleView()"> Client<br>
+                    </td>
+                </tr>
+                <tr style="width:90%;margin-bottom:50px">
+                    <td colspan="2" class="tdcss" style="color:#2942b9;font-size:16px;margin-bottom:10px;border-bottom:1px solid;border-bottom-color:rgba(0, 0, 0, 0.3)">
+                        Update Excel Configuration
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdcss">
+                        <label>First Row Column Empty</label>
+                    </td>
+                    <td class="tdcss">
+                        <select id="firstRowColEmptyDDl" [(ngModel)]="firstRowColEmptyDDl">
+                            <option  [ngValue]=true>True</option>
+                            <option [ngValue]=false>False</option>
+                        </select>
+
+                    </td>
+                    <td class="tdcss">
+                        <label>Single Sheet</label>
+                    </td>
+                    <td class="tdcss">
+                        <select id="SingleSheetDDl" [(ngModel)]="SingleSheetDDl">
+                            <option [ngValue]=true>True</option>
+                            <option [ngValue]=false>False</option>
+                        </select>
+
+                    </td>
+                    <td class="tdcss">
+                        <label>Dynamic Width</label>
+                    </td>
+                    <td class="tdcss">
+                        <select id="dynamicWidthDDl" [(ngModel)]="dynamicWidthDDl">
+                            <option value="true" [ngValue]="true" selected>True</option>
+                            <option value="false" [ngValue]="false">False</option>
+                        </select>
+                    </td>
+                    <td class="tdcss">
+                        <label>Min Width</label>
+                    </td>
+                    <td class="tdcss">
+                        <input type="text" id="minWidthtxt" [(ngModel)]="minWidthtxt" required="required" value="30" />                              
+                    </td>
+                </tr>
+                <tr style="width:90%;margin-bottom:50px">
+                    <td colspan="2" class="tdcss" style="color:#2942b9;font-size:16px;margin-bottom:10px;border-bottom:1px solid;border-bottom-color:rgba(0, 0, 0, 0.3)">
+                        Update PDF Configuration
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdcss">
+                        <label>HTML Table Style</label>
+                    </td>
+                    <td class="tdcss">
+                        <select id="htmltableStyleDDl" [(ngModel)]="htmltableStyleDDl">
+
+                            <option [ngValue]=false>False</option>
+                            <option [ngValue]=true>True</option>
+                        </select>
+                    </td>
+                    <td class="tdcss">
+                        <label>Custom Text</label>
+                    </td>
+                    <td class="tdcss" style="width:400px;">
+                        <textarea id="CustomTxtarea" [(ngModel)]="CustomTxtarea">This Text box helps adding custom text to PDF as a Header</textarea>
+                    </td>
+                    <td class="tdcss">
+                        <label>Custom Text Lines</label>
+                    </td>
+                    <td class="tdcss">
+                        <input type="text" id="CustomTxtareaLinestxt" [(ngModel)]="CustomTxtareaLinestxt" required="required" value="2" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class='mydiv' id='jsonVal' *ngIf="jsonVal"> 
+<textarea id="txt" style="height:400px;width: 90%;margin-left:50px">
+[
+  {
+    "Contact": "Elizabeth Lincoln",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(604) 555-4729",
+    "Company Name": "Bottom-Dollar Markets",
+    "City": "Tsawassen"
+  },
+  {
+    "Contact": "Diego Roel",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(91) 555 94 44",
+    "Company Name": "FISSA Fabrica Inter. Salchichas S.A.",
+    "City": "Madrid"
+  },
+  {
+    "Contact": "Mario Pontes",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(21) 555-0091",
+    "Company Name": "Hanari Carnes",
+    "City": "Rio de Janeiro"
+  },
+  {
+    "Contact": "Carlos González",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(9) 331-6954",
+    "Company Name": "LILA-Supermercado",
+    "City": "Barquisimeto"
+  },
+  {
+    "Contact": "Bernardo Batista",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(21) 555-4252",
+    "Company Name": "Que Delícia",
+    "City": "Rio de Janeiro"
+  },
+  {
+    "Contact": "Horst Kloss",
+    "Contact Title": "Accounting Manager",
+    "Phone": "0372-035188",
+    "Company Name": "QUICK-Stop",
+    "City": "Cunewalde"
+  },
+  {
+    "Contact": "Alejandra Camino",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(91) 745 6200",
+    "Company Name": "Romero y tomillo",
+    "City": "Madrid"
+  },
+  {
+    "Contact": "Pascale Cartrain",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(071) 23 67 22 20",
+    "Company Name": "Suprêmes délices",
+    "City": "Charleroi"
+  },
+  {
+    "Contact": "Paul Henriot",
+    "Contact Title": "Accounting Manager",
+    "Phone": "26.47.15.10",
+    "Company Name": "Vins et alcools Chevalier",
+    "City": "Reims"
+  },
+  {
+    "Contact": "Pirkko Koskitalo",
+    "Contact Title": "Accounting Manager",
+    "Phone": "981-443655",
+    "Company Name": "Wartian Herkku",
+    "City": "Oulu"
+  }
+]
+</textarea>
+</div>
+
+<div id="example" *ngIf="example">
+     <table>
+         <tr>
+             <td>
+                 Demo Grid 1 (table name : Grid1)
+                 <div id="grid1">   </div>
+             </td>
+             <td>
+                 Demo Grid 2 (table name : Grid2)
+                 <div id="grid2"></div>
+             </td>
+             <td>
+                 Demo Grid 3 (table name : Grid3)
+                 <div id="grid3"></div>
+                
+             </td>
+         </tr>
+     </table>
+</div>
+<br />
+<br />
+<div>
+<table>
+    <textarea id="txta" style="display:none;"></textarea>
+    
+    <tr id="footerExport">
+        
+        <td style="border:none;font:25px bold;color:crimson;padding-left:30px;"> Export Options</td>
+        <td id="exportexcel" style="border:none;"><img src="./image/xls.jpg"  (click)="excelExport()"/></td>
+        <td id="exportpdf" style="border:none;"><img src="./image/pdf.jpg" (click)="pdfExport()"/></td>
+        <td id="exportcsv" style="border:none;"><img src="./image/csv.jpg" (click)="csvExport()"/></td>
+    </tr>
+</table>
+</div>
+<!-- <pdf-content></pdf-content> -->
+</body>
+</html>
