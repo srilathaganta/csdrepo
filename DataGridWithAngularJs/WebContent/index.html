@@ -1,0 +1,2565 @@
+<!DOCTYPE html>
+<html ng-app="gridApp">
+<head>
+   
+    <style>
+        html {
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <title>Data Grid</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.1.223/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.1.223/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.1.223/styles/kendo.material.mobile.min.css" />
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script>
+	
+    <script src="https://kendo.cdn.telerik.com/2017.1.223/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2017.1.223/js/kendo.all.min.js"></script>
+    <link href="Content/jquery-ui.css" rel="stylesheet" /> 
+    <link href="Content/jquery-ui.structure.css" rel="stylesheet" />
+    <link href="Content/jquery-ui.theme.css" rel="stylesheet" />
+
+    <!--<script src="Scripts/jquery-3.1.0.min.js"></script>-->
+    <script src="Scripts/tableExport.js"></script>
+	 <script src="Scripts/test.js"></script>
+    <script src="Scripts/jquery.base64.js"></script>
+    <script src="Scripts/html2canvas.js"></script>
+    <script src="Scripts/jspdf/libs/base64.js"></script>
+    <script src="Scripts/jspdf/libs/sprintf.js"></script>
+    <script src="Scripts/jspdf/jspdf.js"></script>
+    <script src="Scripts/jspdf.plugin.autotable.js"></script>
+    <!--<script src="Scripts/colors.js"></script>-->
+    <!--<script src="Scripts/strsup.js"></script>
+    <script src="Scripts/alasql.min.js"></script>
+    <script src="Scripts/Exporttoexcel.js"></script>-->
+    <script src="Scripts/Blob.js"></script>
+    <script src="Scripts/FileSaver.js"></script>
+    <!--<script src="http://www.convertcsv.com/js/blob.js"></script>-->
+    <!--<script src="http://www.convertcsv.com/js/underscore-min.js"></script>
+    <script src="http://www.convertcsv.com/js/blob.js"></script>
+    <script src="http://www.convertcsv.com/js/filesaver.js"></script>
+    <script src="http://www.convertcsv.com/json2.js"></script>
+   https://cdn.rawgit.com/MrRio/jsPDF/master/libs/html2pdf.js
+    <script src="http://www.convertcsv.com/localread.js"></script>
+    <script src="http://www.convertcsv.com/csvparse.js?v=4"></script>
+    <script src="http://www.convertcsv.com/csvsup.js"></script>-->
+
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+   -->
+
+    <script src="Scripts/xlsx.full.min.js"></script>
+    <!-- <link rel="stylesheet" href="/js/custom.css"> -->
+    <script src="controller/exportDirective.js"></script> 
+
+    <style>
+        
+:-moz-placeholder {
+  color: #c9c9c9 !important;
+  font-size: 13px;
+}
+
+::-webkit-input-placeholder {
+  color: #ccc;
+  font-size: 13px;
+}
+
+input {
+  font-family: 'Lucida Grande', Tahoma, Verdana, sans-serif;
+  font-size: 14px;
+  font-weight:normal;
+}
+
+        textarea {
+              font-weight:normal;
+        }
+
+input[type=text], input[type=password] {
+  margin: 5px;
+  padding: 0 10px;
+  width: 200px;
+  height: 34px;
+  color: #404040;
+  background: white;
+  border: 1px solid;
+  border-color: #c4c4c4 #d1d1d1 #d4d4d4;
+  border-radius: 2px;
+  outline: 5px solid #eff4f7;
+  -moz-outline-radius: 3px;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+input[type=text]:focus, input[type=password]:focus {
+  border-color: #7dc9e2;
+  outline-color: #dceefc;
+  outline-offset: 0;
+}
+
+input[type=submit],input[type=button] {
+  padding: 0 18px;
+  height: 29px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #527881;
+  text-shadow: 0 1px #e3f1f1;
+  background: #cde5ef;
+  border: 1px solid;
+  border-color: #b4ccce #b3c0c8 #9eb9c2;
+  border-radius: 16px;
+  outline: 0;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  background-image: -webkit-linear-gradient(top, #edf5f8, #cde5ef);
+  background-image: -moz-linear-gradient(top, #edf5f8, #cde5ef);
+  background-image: -o-linear-gradient(top, #edf5f8, #cde5ef);
+  background-image: linear-gradient(to bottom, #edf5f8, #cde5ef);
+  -webkit-box-shadow: inset 0 1px white, 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 1px white, 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+input[type=submit]:active {
+  background: #cde5ef;
+  border-color: #9eb9c2 #b3c0c8 #b4ccce;
+  -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+.lt-ie9 input[type=text], .lt-ie9 input[type=password] {
+  line-height: 34px;
+}
+     .tdcss {
+            padding:10px  !important;
+            width:auto;            
+        }
+.login {
+  position: relative;
+  margin: 0 auto;
+  padding: 20px 20px 20px;
+  width: 310px;
+  background: white;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+        #activity {
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+            #activity td {
+                text-align: center;
+                border: 1px solid #ccc;
+            }
+
+        #footerExport td {
+            cursor: pointer;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        .customer-photo {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-size: 32px 35px;
+            background-position: center center;
+            vertical-align: middle;
+            line-height: 32px;
+            box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+            margin-left: 5px;
+        }
+
+        .customer-name {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 32px;
+            padding-left: 3px;
+        }
+        .btncls {
+  background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+  background-image: -o-linear-gradient(top, #3498db, #2980b9);
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.btncls:hover {
+  background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+  text-decoration: none;
+}
+
+
+    </style>
+</head>
+
+<body>
+    <div  style="width:95%;margin-bottom:10px;margin-top:-5px;">
+        <h1>
+            Utility to download any UI grid/ table into xls, pdf and csv format.
+            <br /> <span style="font-size:medium;">Cross Browser Compatibility (Google Chrome: 58.0, IE: 11.0, Firefox: 53.0)</span>
+           
+
+       
+        </h1>
+       
+        </div>
+
+
+
+        <div style="margin-left:30px;">
+            <input type="submit" id="showmenu" value="Show / Hide Export Configurations" />
+        </div>
+
+
+        <br />
+        <div class="bg" id="Configdiv" style="display:none;">
+            <div class="main">
+                <div class="login" style="width:90%;margin-bottom:10px">
+                    <table style="margin:0px auto">
+                        <tr style="width:90%;margin-bottom:50px">
+                            <td colspan="2" class="tdcss" style="color:#2942b9;font-size:16px;margin-bottom:10px;border-bottom:1px solid;border-bottom-color:rgba(0, 0, 0, 0.3)">
+                               General Configurations
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdcss">
+                                <label>File Name</label>
+                            </td>
+                            <td class="tdcss">
+                                <input type="text" id="fileNametxt" required="required" value="Demo Grid" />
+                            </td>
+                            <td class="tdcss">                            
+                                <label>Grids To Download</label>
+                            </td>
+                            <td class="tdcss">
+                                <label>Grid 1 <input type="checkbox" value="grid1" checked="checked" name="grid" /></label>
+                                <label>Grid 2 <input type="checkbox" value="grid2" checked="checked"  name="grid" /></label>
+                                <label>Grid 3 <input type="checkbox" value="grid3" checked="checked"  name="grid" /></label>
+                               
+
+                            </td>
+                         <td class="tdcss">                            
+                                <label>Datasource</label>
+                            </td>
+                            <td class="tdcss" id="ds_value">
+                                <input type="radio" id="serVal" name="dsDetails" value="server"  onClick="toggleView()"> Server<br>
+								<input type="radio" id="clientVal" name="dsDetails" value="client" checked onClick="toggleView()"> Client<br>
+                        
+                            </td>
+
+                        </tr>
+                        <tr style="width:90%;margin-bottom:50px">
+                            <td colspan="2" class="tdcss" style="color:#2942b9;font-size:16px;margin-bottom:10px;border-bottom:1px solid;border-bottom-color:rgba(0, 0, 0, 0.3)">
+                                Update Excel Configuration
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdcss">
+                                <label>First Row Column Empty</label>
+                            </td>
+                            <td class="tdcss">
+                                <select id="firstRowColEmptyDDl">
+                                    <option value="true" selected>True</option>
+                                    <option value="false">False</option>
+                                </select>
+
+                            </td>
+                            <td class="tdcss">
+                                <label>Single Sheet</label>
+                            </td>
+                            <td class="tdcss">
+                                <select id="SingleSheetDDl">
+                                    <option value="true" >True</option>
+                                    <option value="false" selected>False</option>
+                                </select>
+
+                            </td>
+                            <td class="tdcss">
+                             
+                                <label>Dynamic Width</label>
+                            </td>
+                            <td class="tdcss">
+                                <select id="dynamicWidthDDl">
+                                    <option value="true" selected>True</option>
+                                    <option value="false">False</option>
+                                </select>
+
+                            </td>
+                            <td class="tdcss">
+                                <label>Min Width</label>
+                            </td>
+                            <td class="tdcss">
+                                <input type="text" id="minWidthtxt" required="required" value="30" />                              
+                            </td>
+
+                        </tr>
+                        <tr style="width:90%;margin-bottom:50px">
+                            <td colspan="2" class="tdcss" style="color:#2942b9;font-size:16px;margin-bottom:10px;border-bottom:1px solid;border-bottom-color:rgba(0, 0, 0, 0.3)">
+                                Update PDF Configuration
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdcss">
+
+                                <label>HTML Table Style</label>
+                            </td>
+                            <td class="tdcss">
+                                <select id="htmltableStyleDDl">
+
+                                    <option value="false" selected>False</option>
+                                    <option value="true">True</option>
+                                </select>
+
+                            </td>
+
+
+
+                            <td class="tdcss">
+                              
+                                <label>Custom Text</label>
+                            </td>
+                            <td class="tdcss" style="width:400px;">
+                                <textarea id="CustomTxtarea">This Text box helps adding custom text to PDF as a Header</textarea>
+
+                            </td>
+                            <td class="tdcss">
+                                <label>Custom Text Lines</label>
+                            </td>
+                            <td class="tdcss">
+                                <input type="text" id="CustomTxtareaLinestxt" required="required" value="2" />
+                               
+                            </td>
+
+
+
+                        </tr>
+
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!--<img src="image/ui.jpeg"/>-->
+        <!--<div ><a class="btncls" href="ExportExample.html">Demo Grid 1</a>
+            <a class="btncls" href="ExportExampleGrid1.html">Demo Grid 2</a>
+        <a class="btncls" href="ExportExampleGrid2.html">Demo Grid 3</a></div>-->
+        <br />
+		<div class='mydiv' id='jsonVal' > 
+		 <textarea id="txt" style="height:400px;width: 90%;margin-left:50px"> [
+  {
+    "Contact": "Elizabeth Lincoln",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(604) 555-4729",
+    "Company Name": "Bottom-Dollar Markets",
+    "City": "Tsawassen"
+  },
+  {
+    "Contact": "Diego Roel",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(91) 555 94 44",
+    "Company Name": "FISSA Fabrica Inter. Salchichas S.A.",
+    "City": "Madrid"
+  },
+  {
+    "Contact": "Mario Pontes",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(21) 555-0091",
+    "Company Name": "Hanari Carnes",
+    "City": "Rio de Janeiro"
+  },
+  {
+    "Contact": "Carlos González",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(9) 331-6954",
+    "Company Name": "LILA-Supermercado",
+    "City": "Barquisimeto"
+  },
+  {
+    "Contact": "Bernardo Batista",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(21) 555-4252",
+    "Company Name": "Que Delícia",
+    "City": "Rio de Janeiro"
+  },
+  {
+    "Contact": "Horst Kloss",
+    "Contact Title": "Accounting Manager",
+    "Phone": "0372-035188",
+    "Company Name": "QUICK-Stop",
+    "City": "Cunewalde"
+  },
+  {
+    "Contact": "Alejandra Camino",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(91) 745 6200",
+    "Company Name": "Romero y tomillo",
+    "City": "Madrid"
+  },
+  {
+    "Contact": "Pascale Cartrain",
+    "Contact Title": "Accounting Manager",
+    "Phone": "(071) 23 67 22 20",
+    "Company Name": "Suprêmes délices",
+    "City": "Charleroi"
+  },
+  {
+    "Contact": "Paul Henriot",
+    "Contact Title": "Accounting Manager",
+    "Phone": "26.47.15.10",
+    "Company Name": "Vins et alcools Chevalier",
+    "City": "Reims"
+  },
+  {
+    "Contact": "Pirkko Koskitalo",
+    "Contact Title": "Accounting Manager",
+    "Phone": "981-443655",
+    "Company Name": "Wartian Herkku",
+    "City": "Oulu"
+  }
+]</textarea>
+</div>
+      
+    <div id="example">
+        <table>
+            <tr style="width:1500px!important">
+                <td style="width:500px!important;padding-left:30px;">
+                    Demo Grid 1 (table name : Grid1)
+                    <div id="grid1"  style="height:300px;width:600px!important;">   </div>
+                    <script>
+                    $(document).ready(function () {
+                        $("#grid1").kendoGrid({
+                            dataSource: {
+                                type: "odata",
+                                transport: {
+                                    read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers"
+                                },
+                                pageSize: 20
+                            },
+                            height: 550,
+                            groupable: true,
+                            sortable: true,
+                            selectable: "multiple",
+                            reorderable: true,
+                            resizable: true,
+                            filterable: true,
+                            pageable: {
+                                refresh: true,
+                                pageSizes: true,
+                                buttonCount: 5
+                            },
+                            columns: [{
+                                field: "CompanyName",
+                                title: "Company Name",
+                                width: 420
+                            },
+                            {
+                                title: "Contact Info",
+                                columns: [{
+                                    field: "ContactTitle",
+                                    title: "Contact Title",
+                                    width: 200
+                                }, {
+                                    field: "ContactName",
+                                    title: "Contact Name",
+                                    width: 200
+                                }, {
+                                    title: "Location",
+                                    columns: [{
+                                        field: "Country",
+                                        width: 200
+                                    }, {
+                                        field: "City",
+                                        width: 200
+                                    }]
+                                }, {
+                                    field: "Phone",
+                                    title: "Phone",
+                                    width: 200
+                                }]
+                            }]
+                        });
+                    });
+                    </script>
+                </td>
+                <td style="width:500px!important">
+                    Demo Grid 2 (table name : Grid2)
+                    <div id="grid2"  style="height:350px;width:500px!important"></div>
+                    <script>
+                    $(document).ready(function () {
+                        $("#grid2").kendoGrid({
+                            dataSource: {
+                                type: "odata",
+                                transport: {
+                                    read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers"
+                                },
+                                pageSize: 15
+                            },
+                            height: 550,
+                            groupable: true,
+                            sortable: true,
+                            selectable: "multiple",
+                            reorderable: true,
+                            resizable: true,
+                            filterable: true,
+                            pageable: {
+                                refresh: true,
+                                pageSizes: true,
+                                buttonCount: 5
+                            },
+                            columns: [{
+                                template: "<div class='customer-photo'" +
+                                                "style='background-image: url(../content/web/Customers/#:data.CustomerID#.jpg);'></div>" +
+                                            "<div class='customer-name'>#: ContactName #</div>",
+                                field: "ContactName",
+                                title: "Contact Name",
+                                width: 240
+                            }, {
+                                field: "ContactTitle",
+                                title: "Contact Title",
+                                width: 240
+                            }, {
+                                field: "CompanyName",
+                                title: "Company Name",
+                                width: 240
+                            }, {
+                                field: "Country",
+                                width: 150
+                            }]
+                        });
+                    });
+                    </script>
+                </td>
+                <td style="width:500px!important">
+                    Demo Grid 3 (table name : Grid3)
+                    <div id="grid3"  style="width:500px!important"></div>
+                    <script>
+                    $(document).ready(function () {
+                        $("#grid3").kendoGrid({
+                            dataSource: {
+                                type: "odata",
+                                transport: {
+                                    read: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Customers"
+                                },
+                                pageSize: 15,
+                                group: { field: "ContactTitle" }
+                            },
+                            height: 550,
+                            groupable: true,
+                            sortable: true,
+                            selectable: "multiple",
+                            reorderable: true,
+                            resizable: true,
+                            filterable: true,
+                            pageable: {
+                                refresh: true,
+                                pageSizes: true,
+                                buttonCount: 5
+                            },
+                            columns: [
+                              {
+                                  field: "ContactName",
+                                  template: "<div class=\'customer-name\'>#: ContactName #</div>",
+                                  title: "Contact",
+                                  width: 200
+                              }, {
+                                  field: "ContactTitle",
+                                  title: "Contact Title",
+                                  width: 220
+                              }, {
+                                  field: "Phone",
+                                  title: "Phone",
+                                  width: 160
+                              }, {
+                                  field: "CompanyName",
+                                  title: "Company Name",
+                                  width: 240
+                              }, {
+                                  field: "City",
+                                  title: "City",
+                                  width: 160
+                              }
+                            ]
+                        });
+                    });
+                    </script>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+        <!--<table id="comtest">
+                    <thead>
+                        <tr >
+                            <th colspan=3 >Heading</th>
+                        </tr>
+                        <tr>
+                            <th >A</th>
+                            <th >B</th>
+                            <th >C</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td >3</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td rowspan=2>1</td>
+                            <td >3</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td >45</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td >3 </td>
+                            <td>43</td>
+                            <td >31</td>
+                        </tr>
+                        <tr >
+                            <td >12 </td>
+                            <td >34</td>
+                            <td>1</td>
+                        </tr>
+                        <tr >
+                            <td >45</td>
+                            <td rowspan=2 >77</td>
+                            <td >3</td>
+                        </tr>
+                        <tr >
+                            <td >5</td>
+                            <td >7</td>
+                        </tr>
+                        <tr>
+                            <td >5</td>
+                            <td >6</td>
+                            <td >7</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+        <!--<table id="activity" >
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Activity on Code Project (%)</th>
+                    <th>Activity on C# Corner (%)</th>
+                    <th>Activity on Asp Forum (%)</th>
+                    <th>Activity on Code Project (%)</th>
+                    <th>Activity on C# Corner (%)</th>
+                    <th>Activity on Asp Forum (%)</th>
+                    <th>Activity on Code Project (%)</th>
+        <th>Activity on C# Corner (%)</th>
+        <th>Activity on Asp Forum (%)</th>
+                    <th>Activity on Code Project (%)</th>
+        <th>Activity on C# Corner (%)</th>
+        <th>Activity on Asp Forum (%)</th>
+                    <th>Activity on Code Project (%)</th>
+        <th>Activity on C# Corner (%)</th>
+        <th>Activity on Asp Forum (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Sibeesh</td>
+                    <td>100</td>
+                    <td>98</td>
+                    <td>80</td>
+                    <td>100</td>
+                    <td>98</td>
+                    <td>80</td>
+                    <td>100</td>
+                    <td>98</td>
+                    <td>80</td>
+                    <td>100</td>
+                    <td>98</td>
+                    <td>80</td>
+                    <td>100</td>
+                    <td>98</td>
+                    <td>80</td>
+                </tr>
+                <tr>
+                    <td>Ajay</td>
+                    <td>90</td>
+                    <td>0</td>
+                    <td>50</td>
+                    <td>90</td>
+                    <td>0</td>
+                    <td>50</td>
+                    <td>90</td>
+                    <td>0</td>
+                    <td>50</td>
+                    <td>90</td>
+                    <td>0</td>
+                    <td>50</td>
+                    <td>90</td>
+                    <td>0</td>
+                    <td>50</td>
+                </tr>
+                <tr>
+                    <td>Ansary</td>
+                    <td>100</td>
+                    <td>20</td>
+                    <td>10</td>
+                    <td>100</td>
+                    <td>20</td>
+                    <td>10</td>
+                    <td>100</td>
+                    <td>20</td>
+                    <td>10</td>
+                    <td>100</td>
+                    <td>20</td>
+                    <td>10</td>
+                    <td>100</td>
+                    <td>20</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Aghil</td>
+                    <td>0</td>
+                    <td>30</td>
+                    <td>90</td>
+                    <td>0</td>
+                    <td>30</td>
+                    <td>90</td>
+                    <td>0</td>
+                    <td>30</td>
+                    <td>90</td>
+                    <td>0</td>
+                    <td>30</td>
+                    <td>90</td>
+                    <td>0</td>
+                    <td>30</td>
+                    <td>90</td>
+                </tr>
+                <tr>
+                    <td>Arya</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                </tr>
+                <tr>
+                    <td>Arya</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>95</td>
+                </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>AryaAryaAryaAryaAryaAryaAryaAryaAryaAryaAryaAryaAryaAryaArya AryaAryaAryaAryaAryaAryaAryaAryaAryaAryaAryaArya AryaAryaAryaAryaAryaAryaAryaAryaAryaAryaArya Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr> <tr>
+            <td>Arya</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+            <td>0</td>
+            <td>0</td>
+            <td>95</td>
+        </tr>
+            </tbody>
+        </table>-->
+       
+        <table>
+            <textarea id="txta" style="display:none;"></textarea>
+            
+            <tr id="footerExport">
+                <br />
+                <br />
+                <td style="border:none;font:25px bold;color:crimson;padding-left:30px;"> Export Options</td>
+                <td export-to-excel id="exportexcel" style="border:none;"><img src="image\xls.jpg"  /></td>
+                <td export-to-pdf id="exportpdf" style="border:none;"><img src="image\pdf.jpg" /></td>
+                <!--<td id="exportimage">Export to PNG</td>-->
+                <td export-to-csv id="exportcsv" style="border:none;"><img src="image\csv.jpg" /></td>
+                <!--<td id="exportword">Export to Word</td>
+                <td id="exporttxt">Export to TXT</td>
+                <td id="exportxml">Export to XML</td>
+                <td id="exportppt">Export to PPT</td>-->
+            </tr>
+        </table>
+</body>
+</html>
+<script type="text/javascript">
+
+ 
+	jsonData = $('#txt').val();
+	 
+	function doit(type, fn) { return export_table_to_excel('activity', type || 'xlsx', fn); }
+
+
+
+    function tableToJSON(tblObj) {
+        var data = [];
+        var $headers = $(tblObj).find("th");
+        var $rows = $(tblObj).find("tbody tr").each(function (index) {
+            $cells = $(this).find("td");
+            data[index] = [];
+            $cells.each(function (cellIndex) {
+                data[index][$($headers[cellIndex]).html()] = $(this).html();
+            });
+        });
+        return data;
+    }
+
+    ///* original data */
+   // var data = [[1, 2, 3], [true, false, null, "sheetjs"], ["foo0000000000000000", "barrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", new Date("2014-02-19T14:30Z"), "0.3"], ["baz", null, "qux"]]
+  
+
+    function Workbook() {
+        if (!(this instanceof Workbook)) return new Workbook();
+        this.SheetNames = [];
+        this.Sheets = {};
+    }
+
+    
+
+    function s2ab(s) {
+        var buf = new ArrayBuffer(s.length);
+        var view = new Uint8Array(buf);
+        for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+        return buf;
+    }
+    
+
+var varpdfFontSize = '7';
+var dsDetails ='';
+function toggleView(){
+ dsDetails =document.querySelector('input[name = "dsDetails"]:checked').value;
+if(dsDetails=='server') {
+	$("#example").hide();
+	$("#jsonVal").show();
+	 jsonData = $('#txt').val();
+	}
+else{
+	$("#jsonVal").hide();
+	$("#example").show();
+	}
+}
+
+ var jsonData = '';
+
+$(document).ready(function () { 
+dsDetails = document.querySelector('input[name = "dsDetails"]:checked').value;
+   jsonData = $('#txt').val();
+if(dsDetails=='server')
+	$("#example").hide();
+else
+	$("#jsonVal").hide();
+
+	
+    //$('#activity').DataTable({
+    //        dom: 'Bfrtip',
+    //        buttons: [
+    //            'copy', 'csv', 'excel', 'pdf'
+    //        ]
+    //    });
+   
+
+    $('#showmenu').click(function () {
+        $('#Configdiv').slideToggle("slide");
+    });
+
+        $('#exportimage').bind('click', function (e) {
+           
+            $('#activity').tableExport({ type: 'png', escape: 'false' });
+        });
+        $('#exportppt').bind('click', function (e) {
+            $('#activity').tableExport({ type: 'powerpoint', escape: 'false' });
+        });
+        $('#exportxml').bind('click', function (e) {
+            $('#activity').tableExport({ type: 'xml', escape: 'false' });
+        });
+        $('#exportword').bind('click', function (e) {
+            $('#activity').tableExport({ type: 'doc', escape: 'false' });
+        });
+        $('#exporttxt').bind('click', function (e) {
+            $('#activity').tableExport({ type: 'txt', escape: 'false' });
+        });
+    });
+</script>
+
