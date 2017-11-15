@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title></title>
+    <title>Export Table</title>
     <base href="/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       body {color:#369;font-family: Arial,Helvetica,sans-serif;}
     </style>
-    <!-- <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="./app/forms.css">
-	 <!-- Manual CSS-->
+	 <!-- Kendo CSS-->
 	<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.1.223/styles/kendo.common-material.min.css" />
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.1.223/styles/kendo.material.min.css" />
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.1.223/styles/kendo.material.mobile.min.css" />
@@ -23,8 +23,7 @@
 	<!-- Kendo -->
 	<script src="https://kendo.cdn.telerik.com/2017.1.223/js/jquery.min.js"></script>
     <script src="https://kendo.cdn.telerik.com/2017.1.223/js/kendo.all.min.js"></script>
-    <!-- Manual -->
-    <script src="Scripts/pdfExternal.js"></script>
+    <!-- Scripts -->
     <script src="Scripts/tableExport.js"></script>
 	<script src="Scripts/test.js"></script>
     <script src="Scripts/jquery.base64.js"></script>
@@ -38,14 +37,14 @@
     <script src="Scripts/Blob.js"></script>
     <script src="Scripts/FileSaver.js"></script>
     <script src="Scripts/xlsx.full.min.js"></script>
-    
-   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.16/jspdf.plugin.autotable.js"></script>-->
+    <script src="Scripts/jszip.js"></script>
+    <script src="Scripts/cpexcel.js"></script>
+    <script src="Scripts/d3.v3.min.js"></script>
     
     <!-- Polyfills -->
-    <script src="WebContent/node_modules/core-js/client/shim.min.js"></script>
+    <script src="node_modules/core-js/client/shim.min.js"></script>
 
-    <script src="/node_modules/zone.js/dist/zone.js"></script>
+    <script src="node_modules/zone.js/dist/zone.js"></script>
     <script src="node_modules/systemjs/dist/system.src.js"></script>
     <script src="systemjs.config.js"></script>
     <script>

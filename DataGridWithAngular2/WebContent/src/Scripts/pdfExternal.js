@@ -1,8 +1,21 @@
+/*! pdfExternal.js
+ *  
+ *  2017-11-14
+ *
+ *  By Pradeepkumar P 
+ *  
+ */
+
+/**
+ * Returns Array of Header Names
+ * @param {Array} data - List of Header Names
+ * @param {Array} irowSpan - Specifies the number of rows a cell should span
+ * @param {Array} icolSpan - Specifies the number of columns a cell should span
+ * @return {Array} out - Return proper Header Names format 
+ */
 var generateArrayPDFObject = (function(data,irowSpan,icolSpan) {
-var data = this.data;
-var irowSpan = this.irowSpan;
-var icolSpan = this.icolSpan;
-  return {
+
+	return {
 	  generateArrayPDF: function (data,irowSpan,icolSpan) {
         var out = [];
         var ranges = [];
@@ -48,14 +61,19 @@ var icolSpan = this.icolSpan;
             out.push(outRow);
         }
 
-        return out//, ranges, wsMerges];
+        return out;
     }
   }
 
 })(generateArrayPDFObject||{})
 
+/**
+ * Returns the color as an array of [r, g, b, a] -- all range from 0 - 255
+ * @param {String} color - name of the color or hexadecimal digit e.g. 'red' or '#f00' 
+ * @return {Array} out - Returns the color as an array of [r, g, b, a] 
+ */
 var colorToRgbObject = (function(color) { 
-	var color = this.color;
+	
   return { 
 	  colorToRgb:function(color) {
 		    var colorArray = new Array();
@@ -85,7 +103,7 @@ var colorToRgbObject = (function(color) {
 })(colorToRgbObject||{})
 
 var getTextFromFirstChildObject = (function(loc) { 
-	var loc = this.loc;
+	
   return { 
 	  getTextFromFirstChild: function(loc) {
 		    var temp = '';
@@ -103,11 +121,15 @@ var getTextFromFirstChildObject = (function(loc) {
 		}
   } 
 })(getTextFromFirstChildObject||{})
-
+/**
+ * Returns Array of Header Names
+ * @param {Array} data - List of Header Names
+ * @param {Array} irowSpan - Specifies the number of rows a cell should span
+ * @param {Array} icolSpan - Specifies the number of columns a cell should span
+ * @return {Array} out - Return proper Header Names format 
+ */
 var generateArrayObject = (function(data, irowSpan, icolSpan) { 
-	var data = this.data;
-	var irowSpan = this.irowSpan;
-	var icolSpan = this.icolSpan;
+	
   return { 
 	  generateArray: function(data, irowSpan, icolSpan) {
 
@@ -154,18 +176,20 @@ var generateArrayObject = (function(data, irowSpan, icolSpan) {
   } 
 })(generateArrayObject||{})
 
-var sheet_from_array_of_arraysObject = (function(data, wsMerges,icolHeaders,irowSpan,icolSpan) { 
-	var data = this.data;
-	var wsMerges = this.wsMerges;
-	var icolHeaders = this.icolHeaders;
-	var irowSpan = this.irowSpan;
-	var icolSpan = this.icolSpan;
+var sheet_from_array_of_arraysObject = (function(data, wsMerges,icolHeaders,irowSpan,icolSpan,canvasdata,firstColumnEmpty) { 
+	
   return { 
-	  sheet_from_array_of_arrays: function(data, wsMerges,icolHeaders,irowSpan,icolSpan) {
+	  sheet_from_array_of_arrays: function(data, wsMerges,icolHeaders,irowSpan,icolSpan,canvasdata,firstColumnEmpty) {
 
 		    
 		    var ws = {};   
 		    var range = { s: { c: 10000000, r: 10000000 }, e: { c: 0, r: 0 } };
+		    var rowcol = parseInt(firstColumnEmpty);
+			var cell_ref_val = rowcol + 65; //charcode of 'A' is 65
+			var border_cell_ref = [];
+			for (var i = 65; i <cell_ref_val ; i++) {
+				border_cell_ref.push(String.fromCharCode(i));
+			}
 		    for (var R = 0; R != data.length; ++R) {
 		        for (var C = 0; C != data[R].length; ++C) {
 		            if (range.s.r > R) range.s.r = R;
@@ -185,9 +209,46 @@ var sheet_from_array_of_arraysObject = (function(data, wsMerges,icolHeaders,irow
 		                cell.v = datenum(cell.v);
 		            }
 		            else cell.t = 's';
+		            for(var i=0;i<border_cell_ref.length;i++){
+						if(border_cell_ref.indexOf(cell_ref.substring(0,1)) < 0){
+				            cell.s= {
+				                    //border
+				                    border: {
+				                            top: {style: "thin", color: {auto: 1}},
+				                            right: {style: "thin", color: {auto: 1}},
+				                            bottom: {style: "thin", color: {auto: 1}},
+				                            left: {style: "thin", color: {auto: 1}}
+				                    }
+				                }
+							}
+						}
 		            ws[cell_ref] = cell;
 		        }
 		    }
+		    var images = [];
+			images.push({
+				c: 1,
+				r: 2,
+				element:  $('#svgdataurl img')
+			  });
+			ws["!images"] = [];
+
+			//add chart in worksheet 
+			$.each(images, function(index, image){
+				ws["!images"].push({
+				name: 'image.png',
+				data: canvasdata,
+				opts: {base64: true},
+				type: "png",
+				position: {
+				  type: 'twoCellAnchor',
+				  attrs: {editAs: 'oneCell'},
+				  from: {col: rowcol, row: data.length+rowcol},
+				  to: {col: rowcol+10, row: rowcol+40}
+				}
+			  });
+			});
+		    
 		    if (range.s.c < 10000000) ws['!ref'] = XLSX.utils.encode_range(range);
 		    ws['!merges'] = wsMerges;
 		    ws['!icolHeaders'] = icolHeaders;
@@ -197,12 +258,10 @@ var sheet_from_array_of_arraysObject = (function(data, wsMerges,icolHeaders,irow
   } 
 })(sheet_from_array_of_arraysObject||{})
 
-var getExcelExportObject = (function(value,irowSpan,icolSpan) { 
-	var value = this.value;
-	var irowSpan = this.irowSpan;
-	var icolSpan = this.icolSpan;
+var getExcelExportObject = (function(value,irowSpan,icolSpan,firstColumnEmpty) { 
+	
   return { 
-	  getExcelExport: function(value,irowSpan,icolSpan) {
+	  getExcelExport: function(value,irowSpan,icolSpan,firstColumnEmpty) {
 		    var tobj = value;
 		    var XlsdefaultsInf = {
 		        dynamicWidth:true,
@@ -244,23 +303,23 @@ var getExcelExportObject = (function(value,irowSpan,icolSpan) {
 		            , worksheetName: "My Worksheet"
 		            , encoding: "utf-8"
 		    };  
-		    //var irowSpan = Array();
-		    //var icolSpan = Array();
-		    var ShowLabel = this.fileNametxt;//$("#fileNametxt").val();
-		    var dsDetail = this.dsDetails;//"client";
+		    var ShowLabel = this.fileNametxt;
+		    var dsDetail = this.dsDetails;
 		    var tabledata = Array();
 		    var headercount = 0;
 		    var icolHeaders = Array();
-		    var firstColumnEmpty = 1;
+		    var firstColumnEmpty = firstColumnEmpty;
 
-		    XlsdefaultsInf.firstRowColEmpty = this.firstRowColEmptyDDl;//$("#firstRowColEmptyDDl").val();
-		    XlsdefaultsInf.SingleSheet = this.SingleSheetDDl;//$("#SingleSheetDDl").val();
+		    XlsdefaultsInf.firstRowColEmpty = this.firstRowColEmptyDDl;
+		    XlsdefaultsInf.SingleSheet = this.SingleSheetDDl;
 
 		    if (XlsdefaultsInf.firstRowColEmpty == 'true') {
-		        tabledata[0] = "";
-		        icolHeaders[0] = "";
-		        irowSpan[0] = "";
-		        icolSpan[0] = "";
+		    	for(var i=0;i<firstColumnEmpty;i++){
+					tabledata[i] = "";
+					icolHeaders[i] = "";
+					irowSpan[i] = "";
+					icolSpan[i] = "";
+				}
 		    } else {
 		        firstColumnEmpty = 0;
 		    }
@@ -325,8 +384,6 @@ var getExcelExportObject = (function(value,irowSpan,icolSpan) {
 		               };
 		               debugger
 		               $('#' + value).find('thead').find('tr').each(function (i, v) {
-		                   // firstColumnEmpty = firstColumnEmpty + parseInt(singlesheetcnt);
-		                   //if (i == 0) i = i + singlesheetcnt;               
 		                   tabledata[singlesheetcnt + firstColumnEmpty] = Array();
 		                   icolHeaders[singlesheetcnt + firstColumnEmpty] = Array();
 		                   irowSpan[singlesheetcnt + firstColumnEmpty] = Array();
@@ -352,8 +409,6 @@ var getExcelExportObject = (function(value,irowSpan,icolSpan) {
 		               // Row vs Column
 		               $('#' + value).find('tbody').find('tr').each(function (i, v) {
 		                   tdData += "\n";
-		                   //if (i == 0) i = i + continuecnt;
-		                   //firstColumnEmpty == firstColumnEmpty + parseInt(singlesheetcnt);
 		                   tabledata[singlesheetcnt + firstColumnEmpty] = Array();
 		                   irowSpan[singlesheetcnt + firstColumnEmpty] = Array();
 		                   icolSpan[singlesheetcnt + firstColumnEmpty] = Array();
@@ -430,26 +485,6 @@ var getExcelExportObject = (function(value,irowSpan,icolSpan) {
   } 
 })(getExcelExportObject||{})
 
-var getTextFromFirstChildObject = (function(loc) { 
-	var loc = this.loc;
-  return { 
-	  getTextFromFirstChild: function(loc) {
-		    var temp = '';
-		    if ($(loc).contents(":not(:empty)").first().text() == '') {
-		        temp = $(loc).contents().first().text();
-		        if (temp == '') {
-		            temp = $(loc).contents(":not(:empty)")[1].innerText;
-		        }
-		    }
-		    else {
-		        temp = $(loc).contents(":not(:empty)").first().text();
-		    }
-		   
-		    return temp.trim();
-		}
-  } 
-})(getTextFromFirstChildObject||{})
-
 var WorkbookObject = (function () {
 	
 	return{
@@ -459,12 +494,12 @@ var WorkbookObject = (function () {
 		        this.Sheets = {};
 		}
 	}
-    })(WorkbookObject||{})
+})(WorkbookObject||{})
 
     
 
 var s2abObject = (function(s) {
-	var s = this.s;
+	
 	return{
 		s2ab: function(s){
 			var buf = new ArrayBuffer(s.length);
@@ -474,6 +509,31 @@ var s2abObject = (function(s) {
 		}
 	}
 })(s2abObject||{})
+
+var utilityCallbackObject = (function(object) {
+	
+	return{
+		utilityCallback: function(object){
+			var myObject = {
+				    header1: 'some string value',
+				    header2: 'some text',
+				    header3: 'some other text'
+				};
+			object = myObject;
+			return object; 
+		}
+	}
+})(utilityCallbackObject||{})
+
+
+var checkObject = (function(obj) {
+	
+	return{
+		checkObj: function(obj){
+			return obj && obj !== 'null' && obj !== 'undefined';
+		}
+	}
+})(checkObject||{})
 
 
 

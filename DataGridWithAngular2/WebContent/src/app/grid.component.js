@@ -12,12 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
 require("rxjs/add/operator/toPromise");
-//import './exportTable.js';
 require("Scripts/pdfExternal.js");
 require("Scripts/xlsx.full.min.js");
 require("Scripts/FileSaver.js");
 var GridComponent = (function () {
-    //txt:string = '';
     function GridComponent(http) {
         this.http = http;
         this.showmenu = false;
@@ -29,30 +27,96 @@ var GridComponent = (function () {
         this.grid3 = true;
         this.dsDetails = 'client';
         this.firstRowColEmptyDDl = true;
+        this.rowcolumn = 1;
         this.SingleSheetDDl = false;
         this.dynamicWidthDDl = "true";
         this.minWidthtxt = "30";
         this.htmltableStyleDDl = false;
         this.CustomTxtarea = "This Text box helps adding custom text to PDF as a Header";
         this.CustomTxtareaLinestxt = 2;
+        this.rowColumnEmpty = true;
     }
-    //Grid onload code
+    //Grid onload
     GridComponent.prototype.ngAfterViewInit = function () {
         this.getGridOnloadData();
     };
-    /* toggleView(){
-         if(this.example){
+    //show or hide DataSource 
+    GridComponent.prototype.toggleView = function () {
+        if (this.example) {
             this.jsonVal = true;
             this.example = false;
-                
-         } else{
-           this.getGridOnloadData();
-           this.example = true;
-           this.jsonVal = false;
-         }
-         
-      }*/
+        }
+        else {
+            this.getGridOnloadData();
+            this.example = true;
+            this.jsonVal = false;
+        }
+    };
+    //show or hide RowColumn
+    GridComponent.prototype.rowColumnView = function (value) {
+        if (value) {
+            this.rowColumnEmpty = true;
+        }
+        else {
+            this.rowColumnEmpty = false;
+        }
+    };
     GridComponent.prototype.getGridOnloadData = function () {
+        // Chart Code    
+        var width = 960, height = 500;
+        var m = 5, // number of series
+        n = 90; // number of values
+        // Generate random data into five arrays.
+        var data = d3.range(m).map(function () {
+            return d3.range(n).map(function () {
+                return Math.random() * 100 | 0;
+            });
+        });
+        var x = d3.scale.linear()
+            .domain([0, n - 1])
+            .range([0, width]);
+        var y = d3.scale.ordinal()
+            .domain(d3.range(m))
+            .rangePoints([0, height], 1);
+        var color = d3.scale.ordinal()
+            .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]);
+        var area = d3.svg.area()
+            .interpolate("basis")
+            .x(function (d, i) { return x(i); })
+            .y0(function (d) { return -d / 2; })
+            .y1(function (d) { return d / 2; });
+        var svg = d3.select("#svg").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        svg.selectAll("path")
+            .data(data)
+            .enter().append("path")
+            .attr("transform", function (d, i) { return "translate(0," + y(i) + ")"; })
+            .style("fill", function (d, i) { return color(i); })
+            .attr("d", area);
+        var html = d3.select("svg")
+            .attr("version", 1.1)
+            .attr("xmlns", "http://www.w3.org/2000/svg")
+            .node().parentNode.innerHTML;
+        var imgsrc = 'data:image/svg+xml;base64,' + btoa(html);
+        var img = '<img src="' + imgsrc + '">';
+        d3.select("#svgdataurl").html(img);
+        //Canvas Data
+        var canvas = document.querySelector("canvas");
+        var context = canvas.getContext("2d");
+        var canvasDataVal = '';
+        var image = new Image;
+        image.src = $('#svgdataurl img').attr('src');
+        image.onload = function () {
+            // Draw the image onto the canvas
+            context.drawImage(image, 0, 0);
+            /** save canvas image as data url (png format by default)
+              * If you'd like for the image data URL to be in the jpeg format,
+              * you can pass image/jpeg as the first argument in the toDataURL() method.
+              */
+            canvasDataVal = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg|svg\+xml);base64,/, '');
+        };
+        // Grid1
         $("#grid1").kendoGrid({
             dataSource: {
                 type: "odata",
@@ -104,6 +168,7 @@ var GridComponent = (function () {
                         }]
                 }]
         });
+        // Grid2
         $("#grid2").kendoGrid({
             dataSource: {
                 type: "odata",
@@ -144,6 +209,7 @@ var GridComponent = (function () {
                     width: 150
                 }]
         });
+        // Grid3    
         $("#grid3").kendoGrid({
             dataSource: {
                 type: "odata",
@@ -191,8 +257,9 @@ var GridComponent = (function () {
             ]
         });
     };
+    // Export Pdf
     GridComponent.prototype.pdfExport = function () {
-        var dsDetail = this.dsDetails; //"client";
+        var dsDetail = this.dsDetails;
         var jsonDataVal = (function () {
             var json = null;
             $.ajax({
@@ -208,11 +275,12 @@ var GridComponent = (function () {
         })();
         var irowSpan = Array();
         var icolSpan = Array();
-        var ShowLabel = this.fileNametxt; //$("#fileNametxt").val();
+        var ShowLabel = this.fileNametxt;
         var headercount = 0;
+        var object = {};
         var PdfdefaultsInf = {
             htmltableStyle: false,
-            customText: '',
+            customText: utilityCallbackObject.utilityCallback(object),
             customtextLines: 0
         };
         var tdData = "";
@@ -236,6 +304,18 @@ var GridComponent = (function () {
             worksheetName: "My Worksheet",
             encoding: "utf-8"
         };
+        // Canvas Data 
+        var canvas = document.querySelector("canvas");
+        var context = canvas.getContext("2d");
+        var image = new Image;
+        image.src = $('#svgdataurl img').attr('src');
+        // Draw the image onto the canvas
+        context.drawImage(image, 0, 0);
+        /** save canvas image as data url (png format by default)
+        * If you'd like for the image data URL to be in the jpeg format,
+        * you can pass image/jpeg as the first argument in the toDataURL() method.
+        */
+        var canvasdata = canvas.toDataURL("image/png");
         var doc = new jsPDF('l', 'mm', [500, 500]);
         var columns = Array();
         var rows = Array();
@@ -271,7 +351,7 @@ var GridComponent = (function () {
                 selected.push("grid3");
             }
         }
-        defaults.tableName = selected.filter(function (item, i, ar) { return ar.indexOf(item) === i; }); //[...new Set<any>(selected)];
+        defaults.tableName = selected.filter(function (item, i, ar) { return ar.indexOf(item) === i; });
         var hi = 0;
         var hj = 0;
         if (dsDetail == 'server') {
@@ -304,11 +384,18 @@ var GridComponent = (function () {
                     jv += 1;
                 }
             }
-            PdfdefaultsInf.customText = this.CustomTxtarea; //$("#CustomTxtarea").val();
-            PdfdefaultsInf.customtextLines = this.CustomTxtareaLinestxt; //$("#CustomTxtareaLinestxt").val();
-            doc.text(PdfdefaultsInf.customText, 10, 10);
+            PdfdefaultsInf.customtextLines = this.CustomTxtareaLinestxt;
+            // Dynamic data generate in pdf using callback - starts
+            var count = 0;
+            if (checkObject.checkObj(PdfdefaultsInf.customText)) {
+                for (var key in PdfdefaultsInf.customText) {
+                    doc.text(PdfdefaultsInf.customText[key], 15, 10 + count);
+                    count = count + 10;
+                }
+            }
+            // Dynamic data generate in pdf using callback - ends 
             if (tablecount == 0) {
-                tablestartpos = PdfdefaultsInf.customtextLines * 10;
+                tablestartpos = PdfdefaultsInf.customtextLines * 10 + count;
             }
             else {
                 tablestartpos = parseInt(doc.autoTable.previous.finalY) + 10;
@@ -320,9 +407,8 @@ var GridComponent = (function () {
             });
         }
         else {
-            PdfdefaultsInf.customText = this.CustomTxtarea; //$("#CustomTxtarea").val();
-            PdfdefaultsInf.customtextLines = this.CustomTxtareaLinestxt; //$("#CustomTxtareaLinestxt").val();
-            PdfdefaultsInf.htmltableStyle = this.htmltableStyleDDl; //$("#htmltableStyleDDl").val();
+            PdfdefaultsInf.customtextLines = this.CustomTxtareaLinestxt;
+            PdfdefaultsInf.htmltableStyle = this.htmltableStyleDDl;
             $.each(defaults.tableName, function (key, value) {
                 columns = Array();
                 rows = Array();
@@ -336,7 +422,6 @@ var GridComponent = (function () {
                     icolSpan[i] = Array();
                     $(this).filter(':visible').find('th').each(function (index, data) {
                         if ($(this).css('display') != 'none') {
-                            //($(this).css('color'))
                             HeaderStyle[0] = (colorToRgbObject.colorToRgb($(this).css('background-color')));
                             HeaderStyle[1] = (colorToRgbObject.colorToRgb($(this).css('color')));
                             columns[i][index] = getTextFromFirstChildObject.getTextFromFirstChild($(this));
@@ -369,17 +454,24 @@ var GridComponent = (function () {
                         }
                     });
                 });
-                // rows = generateArrayPDF(rows)
                 //output
                 if (defaults.consoleLog == 'true') {
                     console.log(tdData);
                 }
-                doc.text(PdfdefaultsInf.customText, 10, 10);
+                // Dynamic data generate in pdf using callback - starts
+                var count = 0;
+                if (checkObject.checkObj(PdfdefaultsInf.customText)) {
+                    for (var key_1 in PdfdefaultsInf.customText) {
+                        doc.text(PdfdefaultsInf.customText[key_1], 15, 10 + count);
+                        count = count + 10;
+                    }
+                }
+                // Dynamic data generate in pdf using callback - ends  
                 if (tablecount == 0) {
-                    tablestartpos = PdfdefaultsInf.customtextLines * 10;
+                    tablestartpos = PdfdefaultsInf.customtextLines * 10 + count;
                 }
                 else {
-                    tablestartpos = parseInt(doc.autoTable.previous.finalY) + 10; //commentted by me 
+                    tablestartpos = parseInt(doc.autoTable.previous.finalY) + 10;
                 }
                 if (PdfdefaultsInf.htmltableStyle != false) {
                     doc.autoTable(columns, rows, {
@@ -396,15 +488,18 @@ var GridComponent = (function () {
                     doc.autoTable(columns, rows, {
                         addPageContent: pageContent,
                         margin: { top: PdfdefaultsInf.customtextLines * 10 },
-                        startY: tablestartpos //,
+                        startY: tablestartpos
                     });
                 }
                 tablecount += 1;
             });
         }
-        doc.save(this.fileNametxt + '.pdf'); //$("#fileNametxt").val() + '.pdf');
+        doc.addPage(); //New page
+        doc.addImage(canvasdata, 'png', 0, 0); //Add chart into PDF
+        doc.save(this.fileNametxt + '.pdf');
         return '';
     };
+    // Excel Export
     GridComponent.prototype.excelExport = function () {
         var irowSpan = Array();
         var icolSpan = Array();
@@ -436,6 +531,14 @@ var GridComponent = (function () {
             worksheetName: "My Worksheet",
             encoding: "utf-8"
         };
+        // Canvas Data
+        var canvas = document.querySelector("canvas");
+        var context = canvas.getContext("2d");
+        var canvasdata = '';
+        var image = new Image;
+        image.src = $('#svgdataurl img').attr('src');
+        var firstColumnEmpty = this.rowcolumn;
+        var fileNametxt = this.fileNametxt;
         var selected = new Array();
         for (var i = 0; i < defaults.tableName.length; i++) {
             var defGridValue = defaults.tableName[i];
@@ -449,44 +552,59 @@ var GridComponent = (function () {
                 selected.push("grid3");
             }
         }
-        defaults.tableName = selected.filter(function (item, i, ar) { return ar.indexOf(item) === i; }); //[...new Set(selected)];
-        XlsdefaultsInf.SingleSheet = this.SingleSheetDDl; // $("#SingleSheetDDl").val();
+        defaults.tableName = selected.filter(function (item, i, ar) { return ar.indexOf(item) === i; });
+        XlsdefaultsInf.SingleSheet = this.SingleSheetDDl;
+        // create workbook
         var wb = WorkbookObject.Workbook();
         var obj = defaults.tableName;
         var ws;
-        if (dsDetail == 'server') {
-            var tdata = getExcelExportObject.getExcelExport('');
-            var oo = generateArrayObject.generateArray(tdata[0], irowSpan, icolSpan);
-            var data = oo[0];
-            var ws = sheet_from_array_of_arraysObject.sheet_from_array_of_arrays(data, oo[1], tdata[1], irowSpan, icolSpan);
-            wb.SheetNames.push(this.fileNametxt);
-            wb.Sheets[this.fileNametxt] = ws;
-        }
-        else {
-            if (XlsdefaultsInf.SingleSheet) {
-                var tdata = getExcelExportObject.getExcelExport('');
+        image.onload = function () {
+            // Draw the image onto the canvas  
+            context.drawImage(image, 0, 0);
+            /** save canvas image as data url (png format by default)
+              * If you'd like for the image data URL to be in the jpeg format,
+              * you can pass image/jpeg as the first argument in the toDataURL() method.
+              */
+            canvasdata = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg|svg\+xml);base64,/, '');
+            if (dsDetail == 'server') {
+                var tdata = getExcelExportObject.getExcelExport('', irowSpan, icolSpan, firstColumnEmpty);
                 var oo = generateArrayObject.generateArray(tdata[0], irowSpan, icolSpan);
                 var data = oo[0];
-                ws = sheet_from_array_of_arraysObject.sheet_from_array_of_arrays(data, oo[1], tdata[1], irowSpan, icolSpan);
-                wb.SheetNames.push(this.fileNametxt);
-                wb.Sheets[this.fileNametxt] = ws;
+                /* generate worksheet */
+                var ws = sheet_from_array_of_arraysObject.sheet_from_array_of_arrays(data, oo[1], tdata[1], irowSpan, icolSpan, canvasdata, firstColumnEmpty);
+                wb.SheetNames.push(fileNametxt);
+                wb.Sheets[fileNametxt] = ws;
             }
             else {
-                $.each(obj, function (key, value) {
-                    var tdata = getExcelExportObject.getExcelExport(value, irowSpan, icolSpan);
+                if (XlsdefaultsInf.SingleSheet) {
+                    var tdata = getExcelExportObject.getExcelExport('', irowSpan, icolSpan, firstColumnEmpty);
                     var oo = generateArrayObject.generateArray(tdata[0], irowSpan, icolSpan);
                     var data = oo[0];
-                    ws = sheet_from_array_of_arraysObject.sheet_from_array_of_arrays(data, oo[1], tdata[1], irowSpan, icolSpan);
-                    wb.SheetNames.push(value);
-                    wb.Sheets[value] = ws;
-                });
+                    /* generate worksheet */
+                    ws = sheet_from_array_of_arraysObject.sheet_from_array_of_arrays(data, oo[1], tdata[1], irowSpan, icolSpan, canvasdata, firstColumnEmpty);
+                    wb.SheetNames.push(fileNametxt);
+                    wb.Sheets[fileNametxt] = ws;
+                }
+                else {
+                    $.each(obj, function (key, value) {
+                        var tdata = getExcelExportObject.getExcelExport(value, irowSpan, icolSpan, firstColumnEmpty);
+                        var oo = generateArrayObject.generateArray(tdata[0], irowSpan, icolSpan);
+                        var data = oo[0];
+                        /* generate worksheet */
+                        ws = sheet_from_array_of_arraysObject.sheet_from_array_of_arrays(data, oo[1], tdata[1], irowSpan, icolSpan, canvasdata, firstColumnEmpty);
+                        wb.SheetNames.push(value); //
+                        wb.Sheets[value] = ws;
+                    });
+                }
             }
-        }
-        var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
-        saveAs(new Blob([s2abObject.s2ab(wbout)], { type: "application/octet-stream" }), this.fileNametxt + ".xlsx");
+            /* save to file */
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+            saveAs(new Blob([s2abObject.s2ab(wbout)], { type: "application/octet-stream" }), fileNametxt + ".xlsx");
+        };
     };
+    //CSV Export    
     GridComponent.prototype.csvExport = function () {
-        var dsDetail = this.dsDetails; //"client";
+        var dsDetail = this.dsDetails;
         var jsonDataVal = (function () {
             var json = null;
             $.ajax({
@@ -502,7 +620,7 @@ var GridComponent = (function () {
         })();
         var irowSpan = Array();
         var icolSpan = Array();
-        var ShowLabel = this.fileNametxt; //$("#fileNametxt").val();
+        var ShowLabel = this.fileNametxt;
         var headercount = 0;
         var PdfdefaultsInf = {
             htmltableStyle: false,
@@ -569,7 +687,7 @@ var GridComponent = (function () {
                     selected.push("grid3");
                 }
             }
-            defaults.tableName = selected.filter(function (item, i, ar) { return ar.indexOf(item) === i; }); //[...new Set(selected)];
+            defaults.tableName = selected.filter(function (item, i, ar) { return ar.indexOf(item) === i; });
             $.each(defaults.tableName, function (key, value) {
                 $('#' + value).find('thead').find('tr').each(function (i, v) {
                     tdData += "\n";
@@ -581,7 +699,6 @@ var GridComponent = (function () {
                             columns[i][index] = getTextFromFirstChildObject.getTextFromFirstChild($(this));
                             irowSpan[i][index] = ($(this).prop('rowSpan'));
                             icolSpan[i][index] = ($(this).prop('colSpan'));
-                            //}
                         }
                     });
                 });
@@ -628,7 +745,6 @@ var GridComponent = (function () {
                 var url = URL.createObjectURL(blob);
                 link.setAttribute("href", url);
                 link.setAttribute("download", this.fileNametxt + ".csv");
-                //link.style = "visibility:hidden";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
